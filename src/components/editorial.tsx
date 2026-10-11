@@ -2,6 +2,8 @@ import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { ranges, statusLabel, type Product } from "@/lib/catalogue";
 import { Media } from "./media";
+import { languagePath, translate, type Locale } from "@/lib/languages";
+import { tastesFrench } from "@/lib/french";
 
 export function TextLink({
   href,
@@ -38,17 +40,25 @@ export function PageIntro({
   );
 }
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({
+  product,
+  locale = "en",
+}: {
+  product: Product;
+  locale?: Locale;
+}) {
   const range = ranges.find((item) => item.id === product.range)!;
+  const path = languagePath(`/products/${product.slug}`, locale);
   return (
     <article className="product-card">
       <Link
-        href={`/products/${product.slug}`}
+        href={path}
         className="product-image-link"
-        aria-label={`Explore ${product.name}`}
+        aria-label={`${locale === "fr" ? "Découvrir" : "Explore"} ${product.name}`}
       >
         <Media
           name={product.image}
+          locale={locale}
           caption={false}
           sizes="(max-width: 600px) 90vw, (max-width: 1000px) 45vw, 30vw"
         />
@@ -58,16 +68,22 @@ export function ProductCard({ product }: { product: Product }) {
       </Link>
       <div className="product-card-meta">
         <span>{range.name}</span>
-        <span>{statusLabel(product.status)}</span>
+        <span>{translate(statusLabel(product.status), locale)}</span>
       </div>
       <h3>
-        <Link href={`/products/${product.slug}`}>{product.name}</Link>
+        <Link href={path}>{product.name}</Link>
       </h3>
       <p>
-        {product.tastes.join(" · ")}{" "}
-        <span className="concept-taste">/ intended direction</span>
+        {product.tastes
+          .map((taste) => (locale === "fr" ? tastesFrench[taste] : taste))
+          .join(" · ")}{" "}
+        <span className="concept-taste">
+          {locale === "fr" ? "/ orientation envisagée" : "/ intended direction"}
+        </span>
       </p>
-      <span className="small-note">Price and final format to be confirmed</span>
+      <span className="small-note">
+        {translate("Price and final format to be confirmed", locale)}
+      </span>
     </article>
   );
 }
@@ -90,15 +106,26 @@ export function RangeIndex() {
   );
 }
 
-export function DevelopmentNote({ children }: { children?: React.ReactNode }) {
+export function DevelopmentNote({
+  children,
+  locale = "en",
+}: {
+  children?: React.ReactNode;
+  locale?: Locale;
+}) {
   return (
     <aside className="development-note">
       <span className="status-dot" />
       <div>
-        <strong>A work in progress, shared honestly.</strong>
+        <strong>
+          {translate("A work in progress, shared honestly.", locale)}
+        </strong>
         <p>
           {children ??
-            "These are development previews. Final products, ingredients, quantities, prices and availability require business approval. Nothing is available to purchase yet."}
+            translate(
+              "These are development previews. Final products, ingredients, quantities, prices and availability require business approval. Nothing is available to purchase yet.",
+              locale,
+            )}
         </p>
       </div>
     </aside>

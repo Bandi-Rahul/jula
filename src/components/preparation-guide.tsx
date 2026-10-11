@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ranges, type RangeId } from "@/lib/catalogue";
+import { rangesFrench } from "@/lib/french";
+import type { Locale } from "@/lib/languages";
 
 const guides: Record<
   RangeId,
@@ -73,13 +75,40 @@ const guides: Record<
   },
 };
 
-export function PreparationGuide() {
+export function PreparationGuide({ locale = "en" }: { locale?: Locale }) {
   const [family, setFamily] = useState<RangeId>("tea");
-  const guide = guides[family];
+  const guide =
+    locale === "fr"
+      ? {
+          method: rangesFrench[family].title,
+          text: rangesFrench[family].context,
+          points: [
+            "Utilisez du matériel propre et adapté à la chaleur ; suivez ses consignes de sécurité.",
+            "Vérifiez les allergènes du produit et du liquide choisi. Un aperçu ne permet pas de décider de leur compatibilité avec votre alimentation.",
+            {
+              tea: "Dose, température et durée doivent suivre l'étiquette validée du lot. Retirez les feuilles en fin d'infusion.",
+              herbal:
+                "N'utilisez que des ingrédients alimentaires confirmés et les instructions finales, sans appliquer par défaut celles du thé.",
+              latte:
+                "Le liquide influe sur la texture et les allergènes. Suivez la séquence de mélange et le dosage approuvés.",
+              cacao:
+                "La dispersion du cacao nécessite une méthode testée pour la recette et le liquide. Suivez les instructions de mélange et de chauffe validées.",
+              coffee:
+                "Adaptez la mouture au matériel et utilisez la recette validée pour le lot, pas un ratio universel.",
+              flower:
+                "Utilisez un récipient propre, résistant à la chaleur et de taille validée. Une fleur décorative n'est pas nécessairement comestible.",
+              roasted:
+                "Cette famille est prévue pour plus tard. Aucune dose, température ou durée n'est confirmée.",
+            }[family],
+          ],
+        }
+      : guides[family];
   return (
     <div className="preparation-guide">
       <div>
-        <label htmlFor="guide-family">Choose a family</label>
+        <label htmlFor="guide-family">
+          {locale === "fr" ? "Choisir une famille" : "Choose a family"}
+        </label>
         <select
           id="guide-family"
           value={family}
@@ -88,12 +117,18 @@ export function PreparationGuide() {
           {ranges.map((range) => (
             <option key={range.id} value={range.id}>
               {range.name}
-              {range.later ? " · Coming later" : ""}
+              {range.later
+                ? locale === "fr"
+                  ? " · Pour plus tard"
+                  : " · Coming later"
+                : ""}
             </option>
           ))}
         </select>
         <p className="small-note">
-          General preparation context. Not final product-specific instructions.
+          {locale === "fr"
+            ? "Contexte général de préparation, pas des instructions finales propres au produit."
+            : "General preparation context. Not final product-specific instructions."}
         </p>
       </div>
       <div className="guide-result" aria-live="polite">
@@ -107,8 +142,11 @@ export function PreparationGuide() {
             <li key={point}>{point}</li>
           ))}
         </ol>
-        <Link href={`/ranges/${family}`} className="text-link">
-          Explore this family
+        <Link
+          href={`${locale === "fr" ? "/fr" : ""}/ranges/${family}`}
+          className="text-link"
+        >
+          {locale === "fr" ? "Explorer cette famille" : "Explore this family"}
         </Link>
       </div>
     </div>

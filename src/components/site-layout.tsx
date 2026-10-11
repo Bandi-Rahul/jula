@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
+import { Header } from "./header";
+import { Footer } from "./footer";
+import type { Locale } from "@/lib/languages";
+import { assetPath } from "@/lib/hosting";
 import "@fontsource/cormorant-garamond/400.css";
 import "@fontsource/cormorant-garamond/500.css";
 import "@fontsource/dm-sans/400.css";
 import "@fontsource/dm-sans/500.css";
-import "./globals.css";
-import "../styles/pages.css";
-import { assetPath } from "@/lib/hosting";
+import "@/app/globals.css";
+import "@/styles/pages.css";
 
 export const metadata: Metadata = {
   title: {
@@ -22,6 +23,12 @@ export const metadata: Metadata = {
   },
   metadataBase: process.env.SITE_URL
     ? new URL(process.env.SITE_URL)
+    : undefined,
+  alternates: process.env.SITE_URL
+    ? {
+        canonical: assetPath("/"),
+        languages: { en: assetPath("/"), fr: assetPath("/fr") },
+      }
     : undefined,
   openGraph: {
     type: "website",
@@ -41,14 +48,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export function SiteLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+  locale,
+}: {
+  children: React.ReactNode;
+  locale: Locale;
+}) {
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body>
         <a href="#main-content" className="skip-link">
-          Skip to content
+          {locale === "fr" ? "Aller au contenu" : "Skip to content"}
         </a>
         <Header />
         <main id="main-content" tabIndex={-1}>

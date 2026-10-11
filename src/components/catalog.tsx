@@ -4,12 +4,16 @@ import { useDeferredValue, useEffect, useRef, useState } from "react";
 import { Search, RotateCcw, X } from "lucide-react";
 import { filterProducts, ranges, type Product } from "@/lib/catalogue";
 import { ProductCard } from "./editorial";
+import { translate, type Locale } from "@/lib/languages";
+import { tastesFrench } from "@/lib/french";
 
 export function Catalog({
   items,
   initial = {},
+  locale = "en",
 }: {
   items: Product[];
+  locale?: Locale;
   initial?: Record<string, string | undefined>;
 }) {
   const [query, setQuery] = useState(initial.q ?? "");
@@ -33,7 +37,15 @@ export function Catalog({
   const searchInput = useRef<HTMLInputElement>(null);
   const [urlReady, setUrlReady] = useState(false);
   const deferredQuery = useDeferredValue(query);
-  const results = filterProducts(items, deferredQuery, family, taste, sort);
+  const results = filterProducts(
+    items,
+    deferredQuery,
+    family,
+    taste,
+    sort,
+    locale,
+  );
+  const t = (text: string) => translate(text, locale);
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     setQuery(params.get("q") ?? initial.q ?? "");
@@ -81,7 +93,7 @@ export function Catalog({
     <div className="catalog">
       <div className="catalog-controls">
         <div className="catalog-search">
-          <label htmlFor="catalog-search">Find a drink</label>
+          <label htmlFor="catalog-search">{t("Find a drink")}</label>
           <div>
             <Search size={18} />
             <input
@@ -90,15 +102,15 @@ export function Catalog({
               type="search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Name, ingredient or proposed origin"
+              placeholder={t("Name, ingredient or proposed origin")}
               maxLength={120}
             />
             {query && (
               <button
                 className="icon-button"
                 onClick={() => setQuery("")}
-                aria-label="Clear search"
-                title="Clear search"
+                aria-label={t("Clear search")}
+                title={t("Clear search")}
               >
                 <X size={16} />
               </button>
@@ -106,80 +118,90 @@ export function Catalog({
           </div>
         </div>
         <div>
-          <label htmlFor="catalog-family">Family</label>
+          <label htmlFor="catalog-family">{t("Family")}</label>
           <select
             id="catalog-family"
             value={family}
             onChange={(event) => setFamily(event.target.value)}
           >
-            <option value="all">All families</option>
+            <option value="all">{t("All families")}</option>
             {ranges.map((range) => (
               <option key={range.id} value={range.id}>
                 {range.name}
-                {range.later ? " · Later" : ""}
+                {range.later
+                  ? locale === "fr"
+                    ? " · Plus tard"
+                    : " · Later"
+                  : ""}
               </option>
             ))}
           </select>
         </div>
         <div>
-          <label htmlFor="catalog-taste">Taste direction</label>
+          <label htmlFor="catalog-taste">{t("Taste direction")}</label>
           <select
             id="catalog-taste"
             value={taste}
             onChange={(event) => setTaste(event.target.value)}
           >
-            <option value="all">All directions</option>
-            {["Floral", "Roasted", "Spiced", "Fruity", "Earthy"].map((item) => (
-              <option key={item}>{item}</option>
-            ))}
+            <option value="all">{t("All directions")}</option>
+            {(["Floral", "Roasted", "Spiced", "Fruity", "Earthy"] as const).map(
+              (item) => (
+                <option key={item} value={item}>
+                  {locale === "fr" ? tastesFrench[item] : item}
+                </option>
+              ),
+            )}
           </select>
         </div>
         <div>
-          <label htmlFor="catalog-sort">Sort by</label>
+          <label htmlFor="catalog-sort">{t("Sort by")}</label>
           <select
             id="catalog-sort"
             value={sort}
             onChange={(event) => setSort(event.target.value)}
           >
-            <option value="editorial">JULA selection</option>
-            <option value="name">Name A–Z</option>
-            <option value="family">Family</option>
+            <option value="editorial">{t("JULA selection")}</option>
+            <option value="name">{t("Name A–Z")}</option>
+            <option value="family">{t("Family")}</option>
           </select>
         </div>
       </div>
       <div className="catalog-results-bar">
         <p role="status" aria-live="polite">
-          {results.length} development{" "}
-          {results.length === 1 ? "preview" : "previews"}
+          {locale === "fr"
+            ? `${results.length} aperçu${results.length === 1 ? "" : "s"} de développement`
+            : `${results.length} development ${results.length === 1 ? "preview" : "previews"}`}
         </p>
         <button className="reset-button" onClick={reset}>
-          <RotateCcw size={14} /> Reset filters
+          <RotateCcw size={14} /> {t("Reset filters")}
         </button>
       </div>
       {results.length ? (
         <div className="product-grid" aria-busy={query !== deferredQuery}>
           {results.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product.id} product={product} locale={locale} />
           ))}
         </div>
       ) : (
         <div className="empty-state">
           <Search size={30} strokeWidth={1} />
-          <h2>No matching previews.</h2>
+          <h2>{t("No matching previews.")}</h2>
           <p>
-            Try another search or a different family. GO ROASTED has no public
-            products yet.
+            {t(
+              "Try another search or a different family. GO ROASTED has no public products yet.",
+            )}
           </p>
           <button className="button button-outline" onClick={reset}>
             <RotateCcw size={16} />
-            Reset filters
+            {t("Reset filters")}
           </button>
         </div>
       )}
       <p className="catalog-image-note">
-        Images are contextual photographs or JULA development illustrations, not
-        final products. Taste directions are preliminary, not batch-approved
-        tasting notes.
+        {t(
+          "Images are contextual photographs or JULA development illustrations, not final products. Taste directions are preliminary, not batch-approved tasting notes.",
+        )}
       </p>
     </div>
   );

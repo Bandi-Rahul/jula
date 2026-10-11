@@ -111,13 +111,6 @@ export const pages = {
     description:
       "Our accessibility design approach and remaining review requirements. No formal certification is claimed.",
   },
-  fr: {
-    title: "Français",
-    eyebrow: "Language availability",
-    heading: "French is not yet available.",
-    description:
-      "Reviewed French content is not yet available. The English website is active.",
-  },
   nl: {
     title: "Nederlands",
     eyebrow: "Language availability",

@@ -460,15 +460,14 @@ export function PageBody({ id }: { id: PageId }) {
         </div>
       </section>
     );
-  if (id === "fr" || id === "nl")
+  if (id === "nl")
     return (
       <section className="unavailable-service wrap">
         <div>
           <h2>English is the current edition.</h2>
           <p>
-            {id === "fr" ? "Français" : "Nederlands"} content needs a complete
-            reviewed translation before activation. This page does not claim to
-            be a translated edition.
+            Nederlands content needs a complete reviewed translation before
+            activation. This page does not claim to be a translated edition.
           </p>
           <Link href="/" className="button button-outline">
             Explore in English

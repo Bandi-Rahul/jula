@@ -1,5 +1,9 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
+import { languagePath, localeFromPath, translate } from "@/lib/languages";
 
 const groups = [
   {
@@ -32,25 +36,36 @@ const groups = [
 ];
 
 export function Footer() {
+  const pathname = usePathname();
+  const locale = localeFromPath(pathname);
+  const french = locale === "fr";
+  const t = (text: string) => translate(text, locale);
   return (
     <footer className="site-footer">
       <div className="footer-top wrap">
         <div className="footer-brand">
-          <Link href="/" className="wordmark">
+          <Link href={languagePath("/", locale)} className="wordmark">
             JULA
           </Link>
           <p>
-            A little curiosity.
-            <br />A cup worth returning to.
+            {french ? "Un peu de curiosité." : "A little curiosity."}
+            <br />
+            {french
+              ? "Une tasse à laquelle on revient."
+              : "A cup worth returning to."}
           </p>
-          <span>Liège, Belgium · Pre-launch</span>
+          <span>
+            {french
+              ? "Liège, Belgique · Pré-lancement"
+              : "Liège, Belgium · Pre-launch"}
+          </span>
         </div>
         {groups.map((group) => (
           <div className="footer-group" key={group.title}>
-            <h2>{group.title}</h2>
+            <h2>{t(group.title)}</h2>
             {group.links.map(([label, href]) => (
-              <Link key={href} href={href}>
-                {label}
+              <Link key={href} href={languagePath(href, locale)}>
+                {t(label)}
               </Link>
             ))}
           </div>
@@ -59,18 +74,29 @@ export function Footer() {
       <div className="footer-bottom wrap">
         <span>© {new Date().getFullYear()} JULA</span>
         <div>
-          <Link href="/privacy">Privacy</Link>
-          <Link href="/terms">Terms</Link>
-          <Link href="/cookies">Cookie preferences</Link>
-          <Link href="/accessibility">Accessibility</Link>
+          {["privacy", "terms", "cookies", "accessibility"].map(
+            (path, index) => (
+              <Link key={path} href={languagePath(`/${path}`, locale)}>
+                {t(
+                  ["Privacy", "Terms", "Cookie preferences", "Accessibility"][
+                    index
+                  ],
+                )}
+              </Link>
+            ),
+          )}
         </div>
-        <Link href="/">
-          English <ArrowUpRight size={13} />
+        <Link
+          href={languagePath(pathname, french ? "en" : "fr")}
+          hrefLang={french ? "en" : "fr"}
+        >
+          {french ? "English" : "Français"} <ArrowUpRight size={13} />
         </Link>
       </div>
       <p className="footer-disclaimer wrap">
-        Development previews are not offers for sale. Legal business details and
-        commercial policies await review.
+        {french
+          ? "Les aperçus de développement ne sont pas des offres de vente. Informations juridiques et politiques commerciales restent à vérifier."
+          : "Development previews are not offers for sale. Legal business details and commercial policies await review."}
       </p>
     </footer>
   );

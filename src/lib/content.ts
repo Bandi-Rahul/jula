@@ -1,4 +1,6 @@
 import { assetPath, staticHosting } from "./hosting";
+import type { MediaKey } from "./catalogue";
+import type { Locale } from "./languages";
 
 export const media = {
   tea: {
@@ -54,9 +56,31 @@ export const site = {
 
 export const locales = [
   { code: "en", name: "English", enabled: true },
-  { code: "fr", name: "Français", enabled: false },
+  { code: "fr", name: "Français", enabled: true },
   { code: "nl", name: "Nederlands", enabled: false },
 ] as const;
+
+export function localisedMedia(name: MediaKey, locale: Locale) {
+  const asset = media[name];
+  if (locale === "en") return asset;
+  const alt = {
+    tea: "Thé et céramique dans une photographie de contexte",
+    matcha: "Boisson au thé vert dans une photographie de contexte",
+    coffee: "Café dans une tasse en céramique, photographie de contexte",
+    cacao: "Cacao et chocolat dans une photographie de contexte",
+    botanical: "Plantes et tasse dans une illustration de développement JULA",
+    jasmine: "Jasmin, thé et tasse dans une illustration de développement JULA",
+    oriental:
+      "Tasse, feuilles de thé et paysage dans une illustration Oriental Beauty JULA",
+  }[name];
+  return {
+    ...asset,
+    alt,
+    caption: ["botanical", "jasmine", "oriental"].includes(name)
+      ? "Illustration de développement JULA. Ni emballage final ni preuve d'origine ou de producteur."
+      : "Photographie de contexte. Ni produit final ni lot ou producteur JULA sélectionné.",
+  };
+}
 
 export const principles = [
   {

@@ -3,19 +3,27 @@
 import Image from "next/image";
 import { useRef } from "react";
 import { Expand, X } from "lucide-react";
-import { media } from "@/lib/content";
+import { localisedMedia } from "@/lib/content";
+import { translate, type Locale } from "@/lib/languages";
 import type { MediaKey } from "@/lib/catalogue";
 
-export function Gallery({ name }: { name: MediaKey }) {
+export function Gallery({
+  name,
+  locale = "en",
+}: {
+  name: MediaKey;
+  locale?: Locale;
+}) {
   const dialog = useRef<HTMLDialogElement>(null);
-  const asset = media[name];
+  const asset = localisedMedia(name, locale);
+  const t = (text: string) => translate(text, locale);
   return (
     <div className="product-gallery">
       <figure>
         <button
           className="gallery-image"
           onClick={() => dialog.current?.showModal()}
-          aria-label="View full contextual image"
+          aria-label={t("View full contextual image")}
         >
           <Image
             src={asset.src}
@@ -24,7 +32,7 @@ export function Gallery({ name }: { name: MediaKey }) {
             priority
             sizes="(max-width: 750px) 100vw, 50vw"
           />
-          <span className="gallery-expand" title="View full image">
+          <span className="gallery-expand" title={t("View full image")}>
             <Expand size={19} />
           </span>
         </button>
@@ -33,7 +41,7 @@ export function Gallery({ name }: { name: MediaKey }) {
       <dialog
         ref={dialog}
         className="image-dialog"
-        aria-label="Full contextual image"
+        aria-label={t("Full contextual image")}
         onClick={(event) => {
           if (event.target === event.currentTarget) dialog.current?.close();
         }}
@@ -42,8 +50,8 @@ export function Gallery({ name }: { name: MediaKey }) {
           <button
             className="icon-button"
             onClick={() => dialog.current?.close()}
-            aria-label="Close full image"
-            title="Close full image"
+            aria-label={t("Close full image")}
+            title={t("Close full image")}
           >
             <X />
           </button>

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { ranges, publicProducts, boxes } from "@/lib/catalogue";
 import { assetPath } from "@/lib/hosting";
+import { languagePath } from "@/lib/languages";
 
 export const dynamic = "force-static";
 
@@ -23,9 +24,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...publicProducts().map((product) => `/products/${product.slug}`),
     ...boxes.map((box) => `/discovery-boxes/${box.slug}`),
   ];
-  return paths.map((path) => ({
-    url: new URL(assetPath(path), base).toString(),
-    changeFrequency: "monthly",
-    priority: path === "/" ? 1 : 0.6,
-  }));
+  return paths
+    .flatMap((path) => [path, languagePath(path, "fr")])
+    .map((path) => ({
+      url: new URL(assetPath(path), base).toString(),
+      alternates: {
+        languages: {
+          en: new URL(assetPath(languagePath(path, "en")), base).toString(),
+          fr: new URL(assetPath(languagePath(path, "fr")), base).toString(),
+        },
+      },
+      changeFrequency: "monthly",
+      priority: path === "/" ? 1 : 0.6,
+    }));
 }

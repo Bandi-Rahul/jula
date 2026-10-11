@@ -461,19 +461,22 @@ export function filterProducts(
   range: string,
   taste: string,
   sort: string,
+  locale: "en" | "fr" = "en",
 ): Product[] {
-  const search = query.trim().toLocaleLowerCase("en");
+  const search = query.trim().toLocaleLowerCase(locale);
   const result = items.filter(
     (product) =>
       isPublicProduct(product) &&
       (range === "all" || product.range === range) &&
       (taste === "all" || product.tastes.includes(taste as Taste)) &&
       `${product.name} ${product.description} ${product.proposedOrigin ?? ""} ${product.tastes.join(" ")}`
-        .toLocaleLowerCase("en")
+        .toLocaleLowerCase(locale)
         .includes(search),
   );
   if (sort === "name")
-    result.sort((first, second) => first.name.localeCompare(second.name));
+    result.sort((first, second) =>
+      first.name.localeCompare(second.name, locale),
+    );
   if (sort === "family")
     result.sort((first, second) => first.range.localeCompare(second.range));
   return result;

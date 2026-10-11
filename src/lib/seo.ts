@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { assetPath } from "./hosting";
+import { languagePath, localeFromPath } from "./languages";
 
 export function pageMetadata(
   title: string,
@@ -12,19 +13,30 @@ export function pageMetadata(
     title,
     description,
     alternates: base
-      ? { canonical: assetPath(path), languages: { en: assetPath(path) } }
+      ? {
+          canonical: assetPath(path),
+          languages: {
+            en: assetPath(languagePath(path, "en")),
+            ...(path === "/nl"
+              ? {}
+              : { fr: assetPath(languagePath(path, "fr")) }),
+          },
+        }
       : undefined,
     openGraph: {
       title: `${title} | JULA`,
       description,
       type: "website",
-      locale: "en_GB",
+      locale: localeFromPath(path) === "fr" ? "fr_BE" : "en_GB",
       url: base ? assetPath(path) : undefined,
       images: base
         ? [
             {
               url: assetPath(image),
-              alt: "Contextual beverage image or JULA development illustration",
+              alt:
+                localeFromPath(path) === "fr"
+                  ? "Photographie de contexte ou illustration de développement JULA"
+                  : "Contextual beverage image or JULA development illustration",
             },
           ]
         : undefined,
