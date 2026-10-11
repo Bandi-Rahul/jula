@@ -8,6 +8,69 @@ import {
   publicProducts,
   ranges,
 } from "../src/lib/catalogue";
+import {
+  boxCopyFrench,
+  frenchPages,
+  frenchProducts,
+  productCopyFrench,
+  rangesFrench,
+} from "../src/lib/french";
+import { boxes } from "../src/lib/catalogue";
+import { pages } from "../src/lib/pages";
+import { languagePath, localeFromPath } from "../src/lib/languages";
+
+test("French content covers every public record without changing purchase gates", () => {
+  for (const product of publicProducts())
+    assert.ok(productCopyFrench[product.slug]);
+  for (const range of ranges) assert.ok(rangesFrench[range.id]);
+  for (const box of boxes) assert.ok(boxCopyFrench[box.slug]);
+  for (const page of Object.keys(pages).filter(
+    (id) => !["fr", "nl"].includes(id),
+  ))
+    assert.ok(frenchPages[page], page);
+  assert.deepEqual(
+    frenchProducts().map((product) => product.slug),
+    publicProducts().map((product) => product.slug),
+  );
+  for (const product of frenchProducts()) {
+    const original = publicProducts().find((item) => item.id === product.id)!;
+    assert.equal(product.status, original.status);
+    assert.equal(product.price, original.price);
+    assert.equal(product.publicationApproved, original.publicationApproved);
+    assert.equal(canPurchase(product, true), canPurchase(original, true));
+  }
+  assert.equal(
+    filterProducts(frenchProducts(), "jasmin", "tea", "Floral", "name", "fr")[0]
+      .slug,
+    "jasmine-tea",
+  );
+  assert.ok(
+    frenchProducts()
+      .find((product) => product.slug === "black-sesame-kinako")!
+      .allergenReview.includes("SOJA"),
+  );
+});
+
+test("language links keep equivalent routes without doubling the Pages base path", () => {
+  const previous = process.env.NEXT_PUBLIC_BASE_PATH;
+  try {
+    process.env.NEXT_PUBLIC_BASE_PATH = "/jula";
+    assert.equal(localeFromPath("/jula/fr/products/jasmine-tea/"), "fr");
+    assert.equal(localeFromPath("/jula/fragrance"), "en");
+    assert.equal(
+      languagePath("/jula/products/jasmine-tea/", "fr"),
+      "/fr/products/jasmine-tea/",
+    );
+    assert.equal(
+      languagePath("/jula/fr/products/jasmine-tea/", "en"),
+      "/products/jasmine-tea/",
+    );
+    assert.equal(languagePath("/jula/", "fr"), "/fr");
+  } finally {
+    if (previous === undefined) delete process.env.NEXT_PUBLIC_BASE_PATH;
+    else process.env.NEXT_PUBLIC_BASE_PATH = previous;
+  }
+});
 
 test("internal concepts and discontinued products never become public", () => {
   assert.equal(

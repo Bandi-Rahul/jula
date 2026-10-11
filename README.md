@@ -30,13 +30,15 @@ To test the static preview, set `TEST_STATIC=true` and `TEST_BASE_URL=http://loc
 - `src/lib/catalogue.ts`: seven families, fourteen public previews, four proposed discovery assortments, publication and purchase gates.
 - `src/lib/content.ts`, `src/lib/pages.ts`: central editorial, FAQ, media, policy and page content.
 - `src/components`: reusable layout, imagery, catalogue, gallery, forms and service experiences.
-- `src/app`: homepage, catalogue, range/product/box routes, editorial routes, metadata and enquiry API.
+- `src/app/(english)`: unprefixed English pages and their root layout.
+- `src/app/fr`: statically generated French pages with a French root layout; shared data and controls live in `src/lib` and `src/components`.
+- `src/app`: metadata routes and the enquiry API.
 - `src/styles/pages.css`, `src/app/globals.css`: responsive layouts and design tokens.
 - `docs/DESIGN.md`: design rationale, sitemap and architecture.
 - `docs/PRELAUNCH.md`: required publication and production approvals.
 - `docs/ASSETS.md`: image sources and limitations.
 
-The canonical edition uses unprefixed English URLs. `/en` and `/en/*` redirect to their English equivalents. `/fr` and `/nl` explain that reviewed translations are not available; they are not translated editions. Activate additional languages only with complete reviewed dictionaries, route layouts, metadata and food information.
+English uses unprefixed URLs; French uses `/fr` and equivalent paths such as `/fr/shop` and `/fr/products/jasmine-tea`. The header language switcher preserves the current page and catalogue query filters. Each edition has its own server-rendered document language, metadata and shared product publication gates. French covers navigation, editorial pages, products, discovery boxes, forms, preparation, FAQs, Passport and legal drafts. Translation copy still needs business/native-speaker review before commercial launch. Dutch remains unavailable at `/nl`. `/en` aliases are redirects in the Node edition only.
 
 ## Working interactions
 

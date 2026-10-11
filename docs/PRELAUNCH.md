@@ -8,7 +8,7 @@
 - Confirm exact discovery contents and quantities separately; currently displayed formats are proposals.
 - Qualify selected suppliers; obtain evidence and permission for producer names, images, claims and certifications.
 - Commission actual product and unbranded editorial photography; complete third-party image rights and attribution review.
-- Complete reviewed French and Dutch content before enabling those editions.
+- Review the implemented French edition with a native speaker and the business, including food/allergen information and legal drafts. Complete reviewed Dutch content before enabling that edition.
 
 ## Before activating forms
 

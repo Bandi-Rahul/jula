@@ -8,7 +8,7 @@ An editorial beverage house, not a wellness marketplace. A photographic first vi
 
 Home / Shop / Ranges (seven family pages) / Product concepts / Discovery boxes / Our story / Origins / Preparation / Commitments / Professionals / Contact / FAQ / Passport preview / Account (unavailable) / Bag (commerce unavailable) / Shipping / Returns / Privacy / Terms / Accessibility / Cookie preferences.
 
-Main navigation: Explore, Discovery boxes, Our story, Professionals. Utility navigation: search, English language availability, account availability, bag availability. Footer contains deeper editorial and support links.
+Main navigation: Explore, Discovery boxes, Our story, Professionals. Utility navigation: search, English/French language selection, account availability, bag availability. Footer contains deeper editorial and support links.
 
 ## Architecture
 
@@ -20,7 +20,7 @@ Header/mobile navigation, Footer, Media, PageIntro, ProductCard, RangeIndex, Cat
 
 ## Content governance
 
-English first, with canonical unprefixed URLs and /en aliases. /fr and /nl explain translation availability; they are not translated editions. French/Dutch require reviewed complete dictionaries and food information before activation. Site copy is proposed for business review. Ingredient/formula details are not copied from conflicting research sheets. Product illustrations and contextual photographs are identified appropriately. No prices, reviews, supplier relationships or fulfilment promises are invented.
+English uses unprefixed URLs and French uses /fr equivalents, with separate root layouts providing correct initial HTML language. Both editions reuse product records and interactive controls; French editorial and product descriptions are authored in a central dictionary. The switcher preserves equivalent pages and filters. Dutch remains unavailable. French copy needs native-speaker and business review before commercial launch, particularly allergen and legal text. Ingredient/formula details are not copied from conflicting research sheets. Product illustrations and contextual photographs are identified appropriately. No prices, reviews, supplier relationships or fulfilment promises are invented.
 
 ## External integrations
 
